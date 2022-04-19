@@ -161,6 +161,11 @@ class Worker(ABC):
         r""" Update the model parameters given a transition batch. """
         pass
 
+    @abstractmethod
+    def save_model(self, step):
+        #Save the model when it is time
+        pass
+
     def rollout(self):
         assert self.pi is not None
         s = self.env.reset()
@@ -187,9 +192,10 @@ class Worker(ABC):
             self.push_setattr('env.T', T_global)  # not exactly thread-safe, but that's okay
             self.env.record_metrics(metrics)
 
-    def learn_loop(self, max_total_steps, batch_size=32):
+    def learn_loop(self, max_total_steps, batch_size=32, save_every=1000, save_path='./'):
         throughput = 0.
-        while self.pull_getattr('env.T') < max_total_steps:
+        T_global = self.pull_getattr('env.T')
+        while T_global < max_total_steps:
             t_start = time.time()
             self.pull_state()
             metrics = self.learn(self.buffer_sample(batch_size=batch_size))
@@ -197,6 +203,9 @@ class Worker(ABC):
             self.push_state()
             self.push_metrics(metrics)
             throughput = batch_size / (time.time() - t_start)
+
+            if T_global%save_every==0:
+                self.save_model(T_global)
 
     def buffer_len(self):
         if self.param_store is None:
