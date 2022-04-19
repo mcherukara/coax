@@ -203,6 +203,7 @@ class Worker(ABC):
             self.push_state()
             self.push_metrics(metrics)
             throughput = batch_size / (time.time() - t_start)
+            T_global = self.pull_getattr('env.T')
 
             if T_global%save_every==0:
                 self.save_model(T_global)
