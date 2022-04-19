@@ -192,7 +192,7 @@ class Worker(ABC):
             self.push_setattr('env.T', T_global)  # not exactly thread-safe, but that's okay
             self.env.record_metrics(metrics)
 
-    def learn_loop(self, max_total_steps, batch_size=32, save_every=1000, save_path='./'):
+    def learn_loop(self, max_total_steps, batch_size=32, save_every=1000):
         throughput = 0.
         T_global = self.pull_getattr('env.T')
         while T_global < max_total_steps:
