@@ -195,6 +195,7 @@ class Worker(ABC):
     def learn_loop(self, max_total_steps, batch_size=32, save_every=1000):
         throughput = 0.
         T_global = self.pull_getattr('env.T')
+        last_save = 0 #When was model last saved?
         while T_global < max_total_steps:
             t_start = time.time()
             self.pull_state()
@@ -205,8 +206,9 @@ class Worker(ABC):
             throughput = batch_size / (time.time() - t_start)
             T_global = self.pull_getattr('env.T')
 
-            if T_global%save_every==0:
+            if T_global-last_save>save_every:
                 self.save_model(T_global)
+                last_save = T_global
 
     def buffer_len(self):
         if self.param_store is None:
