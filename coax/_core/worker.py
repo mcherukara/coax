@@ -183,6 +183,7 @@ class Worker(ABC):
     def rollout_loop(self, max_total_steps, reward_threshold=None):
         reward_threshold = _check_reward_threshold(reward_threshold, self.env)
         T_global = self.pull_getattr('env.T')
+        print(self.pi.epsilon)
         while T_global < max_total_steps and self.env.avg_G < reward_threshold:
             self.pull_state()
             self.rollout()
