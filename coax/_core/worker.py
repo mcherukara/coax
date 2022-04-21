@@ -191,9 +191,9 @@ class Worker(ABC):
             
         while T_global < max_total_steps and self.env.avg_G < reward_threshold:
 
-            try:
+            try: #Update epsilon on schedule
                 self.pi.epsilon = self.epsilon_schedule(self.env.t)
-                print("Epsilon on worker:", self.pi.epsilon)
+                print("Epsilon on worker:", self.pi.epsilon, "at step", self.env.t)
             except AttributeError:
                 pass
 
