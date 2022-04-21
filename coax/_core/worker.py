@@ -185,15 +185,18 @@ class Worker(ABC):
         T_global = self.pull_getattr('env.T')
 
         try:
-            print("Epsilon on worker:", self.pi.epsilon)
-        except AttributeError:
-            pass
-        try:
             print("Boltzmann Temperature on worker:", self.pi.temperature)
         except AttributeError:
             pass
             
         while T_global < max_total_steps and self.env.avg_G < reward_threshold:
+
+            try:
+                self.pi.epsilon = self.epsilon_schedule(self.env.t)
+                print("Epsilon on worker:", self.pi.epsilon)
+            except AttributeError:
+                pass
+
             self.pull_state()
             self.rollout()
             metrics = self.pull_metrics()
