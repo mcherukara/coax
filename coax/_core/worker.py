@@ -193,7 +193,7 @@ class Worker(ABC):
 
             try: #Update epsilon on schedule
                 self.pi.epsilon = self.epsilon_schedule(T_global)
-                print("Epsilon on worker:", self.pi.epsilon, "at step", T_global)
+                print("Epsilon on worker: %.3f" %self.pi.epsilon, "at step", T_global)
             except AttributeError:
                 pass
 
